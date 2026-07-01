@@ -1148,15 +1148,42 @@ function enviar(){
   });
 
   let tot=0;itens.forEach(i=>tot+=i.v);
+  const totFmt=tot.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const sinalFmt=(tot/2).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
   document.getElementById('r-itens').innerHTML=
     itens.map(i=>`<div class="ritem"><span class="ritem-n">${i.n}</span><span class="ritem-v">${fmt(i.v)}</span></div>`).join('')+
     (obsG?`<div style="font-size:.82rem;color:var(--texto-leve);margin-top:8px;padding-top:8px;border-top:1px solid var(--borda)">Obs: ${obsG}</div>`:'');
   document.getElementById('r-total').textContent=fmt(tot);
 
-  document.getElementById('resumo').classList.add('vis');
-  document.getElementById('btn-env').disabled=true;
-  document.getElementById('btn-env').textContent='Pedido enviado ✓';
-  document.getElementById('resumo').scrollIntoView({behavior:'smooth',block:'start'});
+  // Desabilitar botão e mostrar loading
+  const btn=document.getElementById('btn-env');
+  btn.disabled=true;
+  btn.textContent='Enviando...';
+
+  // Enviar para Apps Script
+  const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycby9Mi0ZgOA8L0SUMXARVwxFExnZebTdSWDNG9LVSIdQhqyBuMfRaDtt5VPlVPDCVCYA/exec';
+  const payload={
+    nome, telefone:tel, email,
+    dataRetirada:dataF,
+    obsEntrega:obsD,
+    obsGeral:obsG,
+    itens:itens.map(i=>({nome:i.n,valor:i.v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})})),
+    total:totFmt,
+    sinal:sinalFmt
+  };
+
+  fetch(APPS_SCRIPT_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  })
+  .finally(()=>{
+    btn.textContent='Pedido enviado ✓';
+    document.getElementById('resumo').classList.add('vis');
+    document.getElementById('resumo').scrollIntoView({behavior:'smooth',block:'start'});
+  });
 }
 </script>
 </body>
