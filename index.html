@@ -1,1 +1,1163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noyers Confeitaria — Fazer Pedido</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde:#3a6349;--verde-claro:#5a8a6a;--dourado:#c9a84c;--dourado-claro:#e8c97a;
+  --rosa:#f5e8e4;--rosa-escuro:#e8d0c8;--creme:#fdf8f5;--texto:#2a2a2a;
+  --texto-leve:#6b6b6b;--borda:#ddd0c8;--erro:#c0392b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:var(--creme);color:var(--texto);min-height:100vh;}
+header{background:var(--verde);padding:32px 20px 24px;text-align:center;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;bottom:-1px;left:0;right:0;height:30px;background:var(--creme);border-radius:50% 50% 0 0/100% 100% 0 0;}
+.logo-text{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--dourado-claro);letter-spacing:.12em;line-height:1;}
+.tagline{font-size:.78rem;color:rgba(255,255,255,.65);letter-spacing:.25em;text-transform:uppercase;margin-top:6px;font-weight:300;}
+.sub{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:rgba(255,255,255,.8);font-style:italic;margin-top:12px;}
+.container{max-width:680px;margin:0 auto;padding:32px 20px 60px;}
+.secao{margin-bottom:36px;}
+.secao-titulo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--verde);border-bottom:1px solid var(--dourado);padding-bottom:8px;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.secao-titulo .num{background:var(--verde);color:var(--dourado-claro);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:500;flex-shrink:0;}
+.campo{margin-bottom:16px;}
+.campo label{display:block;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--texto-leve);margin-bottom:6px;font-weight:500;}
+.campo label .ob{color:var(--dourado);}
+.campo input,.campo textarea,.campo select{width:100%;padding:12px 14px;border:1.5px solid var(--borda);border-radius:8px;background:#fff;font-family:'Jost',sans-serif;font-size:.95rem;color:var(--texto);transition:border-color .2s;-webkit-appearance:none;}
+.campo input:focus,.campo textarea:focus,.campo select:focus{outline:none;border-color:var(--verde);}
+.campo textarea{resize:vertical;min-height:80px;}
+.campo-erro{border-color:var(--erro)!important;}
+.msg-erro{font-size:.78rem;color:var(--erro);margin-top:4px;display:none;}
+.msg-erro.vis{display:block;}
+.aviso-data{background:#fff8e6;border:1px solid var(--dourado);border-radius:8px;padding:10px 14px;font-size:.82rem;color:#7a5c00;margin-top:6px;display:none;}
+.aviso-data.vis{display:block;}
+.cat-titulo{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--verde);font-style:italic;margin:24px 0 12px;display:flex;align-items:center;gap:8px;}
+.cat-titulo::after{content:'';flex:1;height:1px;background:var(--rosa-escuro);}
+.pcard{background:#fff;border:1.5px solid var(--borda);border-radius:10px;padding:16px;margin-bottom:12px;transition:border-color .2s,box-shadow .2s;}
+.pcard.on{border-color:var(--verde);box-shadow:0 2px 12px rgba(58,99,73,.1);}
+.pheader{display:flex;align-items:flex-start;gap:12px;}
+.pcheck{width:20px;height:20px;border:2px solid var(--borda);border-radius:4px;cursor:pointer;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#fff;}
+.pcheck.on{background:var(--verde);border-color:var(--verde);}
+.pcheck.on::after{content:'✓';color:#fff;font-size:12px;font-weight:bold;}
+.pinfo{flex:1;}
+.pnome{font-size:.95rem;font-weight:500;color:var(--texto);line-height:1.3;}
+.pdesc{font-size:.78rem;color:var(--texto-leve);margin-top:3px;line-height:1.5;}
+.ppreco{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--verde);font-weight:600;white-space:nowrap;}
+.pconfig{margin-top:14px;padding-top:14px;border-top:1px solid var(--rosa-escuro);display:none;}
+.pconfig.vis{display:block;}
+.clinha{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.cgrupo{flex:1;min-width:140px;}
+.cgrupo label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-leve);margin-bottom:5px;font-weight:500;}
+.cgrupo select,.cgrupo input{width:100%;padding:9px 12px;border:1.5px solid var(--borda);border-radius:6px;background:var(--creme);font-family:'Jost',sans-serif;font-size:.88rem;color:var(--texto);-webkit-appearance:none;}
+.cgrupo select:focus,.cgrupo input:focus{outline:none;border-color:var(--verde);}
+.qty-c{display:flex;align-items:center;gap:8px;}
+.qbtn{width:32px;height:32px;border:1.5px solid var(--borda);border-radius:6px;background:var(--creme);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;color:var(--verde);transition:all .15s;flex-shrink:0;}
+.qbtn:hover{background:var(--verde);color:#fff;border-color:var(--verde);}
+.qinput{width:60px!important;text-align:center;padding:6px 4px!important;font-weight:500;}
+.isub{font-size:.82rem;color:var(--verde-claro);text-align:right;margin-top:8px;font-weight:500;}
 
+/* BRIGADEIROS */
+.binfo{font-size:.82rem;color:var(--texto-leve);background:var(--rosa);border-radius:8px;padding:10px 14px;margin-bottom:14px;line-height:1.7;}
+.btoggle{display:flex;gap:8px;margin-bottom:14px;}
+.tbtn{flex:1;padding:9px;border:1.5px solid var(--borda);border-radius:7px;background:var(--creme);font-family:'Jost',sans-serif;font-size:.85rem;cursor:pointer;color:var(--texto-leve);transition:all .15s;text-align:center;}
+.tbtn.on{background:var(--verde);color:#fff;border-color:var(--verde);}
+.blinha-card{background:var(--rosa);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+.blinha-nome{font-size:.8rem;font-weight:500;color:var(--verde);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.bsab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-bottom:8px;}
+.bsab-item{display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--borda);border-radius:6px;padding:7px 10px;cursor:pointer;transition:border-color .15s;font-size:.82rem;}
+.bsab-item.on{border-color:var(--verde);background:#f0f7f3;}
+.bsab-chk{width:16px;height:16px;border:2px solid var(--borda);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s;}
+.bsab-item.on .bsab-chk{background:var(--verde);border-color:var(--verde);color:#fff;}
+.bcnt{font-size:.78rem;color:var(--texto-leve);margin-top:4px;}
+.bcnt span{color:var(--verde);font-weight:500;}
+.mc-bloco{background:#f0f7f3;border:1.5px solid var(--verde);border-radius:10px;padding:14px;margin-bottom:12px;}
+.mc-titulo{font-size:.8rem;font-weight:500;color:var(--verde);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.mc-linha{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.mc-linha select{flex:1;min-width:160px;padding:8px 10px;border:1.5px solid var(--borda);border-radius:6px;font-family:'Jost',sans-serif;font-size:.85rem;background:var(--creme);-webkit-appearance:none;}
+.mc-preco{font-size:.82rem;color:var(--verde);font-weight:500;white-space:nowrap;min-width:70px;text-align:right;}
+.btn-rm{background:none;border:none;color:var(--erro);cursor:pointer;font-size:1rem;padding:4px 6px;}
+.btn-dash{background:none;border:1.5px dashed var(--verde);color:var(--verde);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:.85rem;margin-top:8px;width:100%;font-family:'Jost',sans-serif;transition:background .15s,color .15s;}
+.btn-dash:hover{background:var(--verde);color:#fff;}
+
+/* DOCES PROGRESSIVOS */
+.tab-preco{display:flex;gap:6px;margin:10px 0 12px;flex-wrap:wrap;}
+.tab-faixa{flex:1;min-width:80px;background:var(--rosa);border-radius:6px;padding:8px 10px;text-align:center;border:1.5px solid transparent;transition:border-color .15s;}
+.tab-faixa.on{border-color:var(--verde);background:#f0f7f3;}
+.fqtd{font-size:.7rem;color:var(--texto-leve);text-transform:uppercase;letter-spacing:.06em;}
+.fpreco{font-size:.88rem;font-weight:500;color:var(--verde);margin-top:2px;}
+.ftag{font-size:.65rem;color:#c07000;font-weight:500;}
+.dqty{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap;}
+.dqty label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-leve);font-weight:500;}
+.dmin{font-size:.75rem;color:var(--erro);display:none;margin-top:4px;}
+.dmin.vis{display:block;}
+.dsab{font-size:.78rem;color:var(--texto-leve);margin-top:6px;}
+.dsab input{width:100%;padding:8px 10px;border:1.5px solid var(--borda);border-radius:6px;font-family:'Jost',sans-serif;font-size:.85rem;margin-top:5px;background:var(--creme);}
+
+.total-box{background:var(--verde);border-radius:12px;padding:20px 24px;margin:28px 0;display:flex;align-items:center;justify-content:space-between;}
+.total-box .tl{color:rgba(255,255,255,.8);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;}
+.total-box .tv{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--dourado-claro);font-weight:600;}
+.total-box .ts{color:rgba(255,255,255,.6);font-size:.78rem;margin-top:2px;}
+.btn-env{width:100%;padding:16px;background:var(--verde);color:#fff;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;letter-spacing:.08em;cursor:pointer;transition:background .2s;}
+.btn-env:hover{background:var(--verde-claro);}
+.btn-env:disabled{background:#aaa;cursor:not-allowed;}
+.aviso-f{background:var(--rosa);border:1px solid var(--rosa-escuro);border-radius:10px;padding:16px;font-size:.83rem;color:#5a3a30;margin-bottom:24px;line-height:1.7;}
+.aviso-f strong{color:var(--verde);}
+#resumo{display:none;background:#fff;border:2px solid var(--verde);border-radius:14px;padding:28px 24px;margin-top:32px;}
+#resumo.vis{display:block;}
+.rtitulo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--verde);text-align:center;margin-bottom:4px;}
+.rsub{text-align:center;font-size:.82rem;color:var(--texto-leve);margin-bottom:20px;}
+.rbloco{background:var(--rosa);border-radius:8px;padding:14px 16px;margin-bottom:12px;font-size:.88rem;line-height:1.8;}
+.rbloco strong{color:var(--verde);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:4px;}
+.ritem{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borda);font-size:.88rem;}
+.ritem:last-child{border-bottom:none;}
+.ritem-n{color:var(--texto);flex:1;padding-right:12px;}
+.ritem-v{color:var(--verde);font-weight:500;white-space:nowrap;}
+.rtotal{display:flex;justify-content:space-between;align-items:center;background:var(--verde);border-radius:8px;padding:14px 16px;margin-top:8px;}
+.rtotal .rl{color:rgba(255,255,255,.8);font-size:.85rem;}
+.rtotal .rv{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--dourado-claro);font-weight:600;}
+.raviso{background:#fff8e6;border:1px solid var(--dourado);border-radius:8px;padding:12px 16px;font-size:.82rem;color:#7a5c00;margin-top:14px;line-height:1.7;text-align:center;}
+footer{background:var(--verde);color:rgba(255,255,255,.5);text-align:center;font-size:.75rem;padding:16px;letter-spacing:.08em;}
+@media(max-width:480px){
+  .logo-text{font-size:2.2rem;}
+  .clinha{flex-direction:column;}
+  .total-box{flex-direction:column;gap:8px;text-align:center;}
+  .bsab-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-text">Noyers</div>
+  <div class="tagline">Confeitaria Artesanal</div>
+  <div class="sub">Faça seu pedido</div>
+</header>
+<div class="container">
+
+<div class="aviso-f" style="margin-bottom:28px">
+  Toda produção é artesanal e feita sob encomenda.<br>
+  <strong>Antecedência mínima de 5 dias.</strong><br>
+  Após o envio, entraremos em contato para confirmar e recolher o sinal de 50%.
+</div>
+
+<!-- 1. DADOS -->
+<div class="secao">
+  <div class="secao-titulo"><span class="num">1</span> Seus dados</div>
+  <div class="campo">
+    <label>Nome completo <span class="ob">*</span></label>
+    <input type="text" id="nome" placeholder="Como você se chama?">
+    <div class="msg-erro" id="e-nome">Por favor, informe seu nome.</div>
+  </div>
+  <div class="campo">
+    <label>WhatsApp / Telefone <span class="ob">*</span></label>
+    <input type="tel" id="telefone" placeholder="(21) 99999-9999">
+    <div class="msg-erro" id="e-tel">Por favor, informe um telefone para contato.</div>
+  </div>
+  <div class="campo">
+    <label>E-mail <span class="ob">*</span></label>
+    <input type="email" id="email" placeholder="seu@email.com">
+    <div class="msg-erro" id="e-email">Por favor, informe um e-mail válido.</div>
+  </div>
+</div>
+
+<!-- 2. DATA -->
+<div class="secao">
+  <div class="secao-titulo"><span class="num">2</span> Data de retirada</div>
+  <div class="campo">
+    <label>Data desejada <span class="ob">*</span></label>
+    <input type="date" id="data-ret">
+    <div class="msg-erro" id="e-data">Selecione uma data com pelo menos 5 dias de antecedência.</div>
+    <div class="aviso-data" id="av-data">⚠️ Data mínima: <strong id="data-min-txt"></strong></div>
+  </div>
+  <div class="campo">
+    <label>Observações sobre entrega</label>
+    <textarea id="obs-data" placeholder="Ex: evento às 18h, retirada de manhã, solicitar entrega por app..."></textarea>
+  </div>
+</div>
+
+<!-- 3. PRODUTOS -->
+<div class="secao">
+  <div class="secao-titulo"><span class="num">3</span> Escolha seus produtos</div>
+
+  <!-- BOLOS REDONDOS -->
+  <div class="cat-titulo">Bolos Redondos</div>
+
+  <div class="pcard" id="card-brt">
+    <div class="pheader">
+      <div class="pcheck" id="chk-brt" onclick="tgSimples('brt')"></div>
+      <div class="pinfo">
+        <div class="pnome">Bolo Redondo Tradicional</div>
+        <div class="pdesc">Massas: Red Velvet, Baunilha, Chocolate, Tradicional · Recheios: Brigadeiro, Mousse de Limão, Ninho, Doce de Leite, Churros, Oreo, Chocolate ao leite, Mousse de Maracujá, Caramelo Salgado, Mousse de Morango</div>
+      </div>
+      <div class="ppreco">a partir de R$65</div>
+    </div>
+    <div class="pconfig" id="cfg-brt">
+      <div class="clinha">
+        <div class="cgrupo"><label>Tamanho</label>
+          <select id="tam-brt" onchange="calcBoloR('t')">
+            <option value="">Selecione</option>
+            <option value="8|65">08 cm — R$65 (3–5 fatias)</option>
+            <option value="15|120">15 cm — R$120 (10–15 fatias)</option>
+            <option value="20|195">20 cm — R$195 (20–28 fatias)</option>
+            <option value="25|242">25 cm — R$242 (30–42 fatias)</option>
+            <option value="35|345">35 cm — R$345 (50–55 fatias)</option>
+            <option value="40|485">40 cm — R$485 (70–82 fatias)</option>
+          </select>
+        </div>
+        <div class="cgrupo"><label>Altura</label>
+          <select id="alt-brt" onchange="calcBoloR('t')">
+            <option value="0">Aro Baixo (padrão)</option>
+            <option value="aro">Aro Alto (+R$30~80)</option>
+          </select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Decoração</label>
+          <select id="dec-brt" onchange="calcBoloR('t')"><option value="">Selecione</option><option>Chantininho</option><option value="Ganache+">Ganache</option><option value="Pasta Americana+">Pasta Americana</option><option value="Buttercream+">Buttercream</option></select>
+        </div>
+        <div class="cgrupo"><label>Massa</label>
+          <select id="mas-brt"><option value="">Selecione</option><option>Red Velvet</option><option>Baunilha</option><option>Chocolate</option><option>Tradicional</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Recheio</label>
+          <select id="rec-brt"><option value="">Selecione</option><option>Brigadeiro</option><option>Mousse de Limão</option><option>Ninho</option><option>Doce de Leite</option><option>Churros</option><option>Oreo</option><option>Chocolate ao leite</option><option>Mousse de Maracujá</option><option>Caramelo Salgado</option><option>Mousse de Morango</option></select>
+        </div>
+        <div class="cgrupo"><label>Fruta opcional (+R$10)</label>
+          <select id="fru-brt" onchange="calcBoloR('t')"><option value="0">Sem fruta</option><option value="10">Ameixa</option><option value="10">Abacaxi</option><option value="10">Morango</option><option value="10">Amora</option><option value="10">Frambuesa</option><option value="10">Cereja</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Adicional decoração</label>
+          <select id="adi-brt" onchange="calcBoloR('t')"><option value="0">Nenhum</option><option value="10">Praliné de Nozes (+R$10)</option><option value="10">Nutella (+R$10)</option><option value="10">Laços (+R$10)</option><option value="20">Topper R$20</option><option value="40">Topper especial R$40</option></select>
+        </div>
+        <div class="cgrupo"><label>Quantidade</label>
+          <div class="qty-c">
+            <button class="qbtn" onclick="sqty('qty-brt',-1,()=>calcBoloR('t'))">−</button>
+            <input class="qinput" type="number" id="qty-brt" value="1" min="1" onchange="calcBoloR('t')">
+            <button class="qbtn" onclick="sqty('qty-brt',1,()=>calcBoloR('t'))">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="isub" id="sub-brt">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <div class="pcard" id="card-brp">
+    <div class="pheader">
+      <div class="pcheck" id="chk-brp" onclick="tgSimples('brp')"></div>
+      <div class="pinfo">
+        <div class="pnome">Bolo Redondo Premium</div>
+        <div class="pdesc">Massas: Mirtilo, Baunilha, Nozes · Recheios: Crocante de Nozes, Praliné, Mousse de Conhaque, Rafaello c/ amêndoas, Creme Brulée, Mousse de Albino, Mousseline de Praliné, Chocolate Belga, Frutas Vermelhas, Mousse de Pistache</div>
+      </div>
+      <div class="ppreco">a partir de R$85</div>
+    </div>
+    <div class="pconfig" id="cfg-brp">
+      <div class="clinha">
+        <div class="cgrupo"><label>Tamanho</label>
+          <select id="tam-brp" onchange="calcBoloR('p')"><option value="">Selecione</option><option value="8|85">08 cm — R$85</option><option value="15|160">15 cm — R$160</option><option value="20|250">20 cm — R$250</option><option value="25|315">25 cm — R$315</option><option value="35|440">35 cm — R$440</option><option value="40|620">40 cm — R$620</option></select>
+        </div>
+        <div class="cgrupo"><label>Altura</label>
+          <select id="alt-brp" onchange="calcBoloR('p')"><option value="0">Aro Baixo (padrão)</option><option value="aro">Aro Alto (+R$30~80)</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Decoração</label>
+          <select id="dec-brp" onchange="calcBoloR('p')"><option value="">Selecione</option><option>Chantininho</option><option value="Ganache+">Ganache</option><option value="Pasta Americana+">Pasta Americana</option><option value="Buttercream+">Buttercream</option></select>
+        </div>
+        <div class="cgrupo"><label>Massa</label>
+          <select id="mas-brp"><option value="">Selecione</option><option>Mirtilo</option><option>Baunilha</option><option>Nozes</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Recheio</label>
+          <select id="rec-brp"><option value="">Selecione</option><option>Crocante de Nozes</option><option>Praliné</option><option>Mousse de Conhaque</option><option>Rafaello c/ amêndoas</option><option>Creme Brulée</option><option>Mousse de Albino</option><option>Mousseline de Praliné</option><option>Chocolate Belga</option><option>Frutas Vermelhas</option><option>Mousse de Pistache</option></select>
+        </div>
+        <div class="cgrupo"><label>Fruta opcional (+R$15)</label>
+          <select id="fru-brp" onchange="calcBoloR('p')"><option value="0">Sem fruta</option><option value="15">Mirtilo</option><option value="15">Abacaxi</option><option value="15">Morango</option><option value="15">Amora</option><option value="15">Frambuesa</option><option value="15">Cereja</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Adicional</label>
+          <select id="adi-brp" onchange="calcBoloR('p')"><option value="0">Nenhum</option><option value="15">Praliné de Nozes (+R$15)</option><option value="15">Nutella (+R$15)</option><option value="15">Laços (+R$15)</option><option value="15">Geleia (+R$15)</option></select>
+        </div>
+        <div class="cgrupo"><label>Quantidade</label>
+          <div class="qty-c">
+            <button class="qbtn" onclick="sqty('qty-brp',-1,()=>calcBoloR('p'))">−</button>
+            <input class="qinput" type="number" id="qty-brp" value="1" min="1" onchange="calcBoloR('p')">
+            <button class="qbtn" onclick="sqty('qty-brp',1,()=>calcBoloR('p'))">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="isub" id="sub-brp">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- BOLOS QUADRADOS -->
+  <div class="cat-titulo">Bolos Quadrados / Retangulares</div>
+
+  <div class="pcard" id="card-bqt">
+    <div class="pheader">
+      <div class="pcheck" id="chk-bqt" onclick="tgSimples('bqt')"></div>
+      <div class="pinfo">
+        <div class="pnome">Bolo Quadrado Tradicional</div>
+        <div class="pdesc">Decorações: Ganache, Chantininho, Buttercream · Massas: Red Velvet, Baunilha Tradicional, Chocolate</div>
+      </div>
+      <div class="ppreco">a partir de R$180</div>
+    </div>
+    <div class="pconfig" id="cfg-bqt">
+      <div class="clinha">
+        <div class="cgrupo"><label>Tamanho</label>
+          <select id="tam-bqt" onchange="calcBoloQ('t')"><option value="">Selecione</option><option value="20x20|180">20×20 cm — R$180 (25–30 fatias)</option><option value="25x25|275">25×25 cm — R$275 (45–50 fatias)</option><option value="30x30|380">30×30 cm — R$380 (70–75 fatias)</option><option value="40x40|640">40×40 cm — R$640 (95–100 fatias)</option></select>
+        </div>
+        <div class="cgrupo"><label>Decoração</label>
+          <select id="dec-bqt" onchange="calcBoloQ('t')"><option value="">Selecione</option><option>Chantininho</option><option value="Ganache+">Ganache</option><option value="Pasta Americana+">Pasta Americana</option><option value="Buttercream+">Buttercream</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Massa</label>
+          <select id="mas-bqt"><option value="">Selecione</option><option>Red Velvet</option><option>Baunilha Tradicional</option><option>Chocolate</option></select>
+        </div>
+        <div class="cgrupo"><label>Recheio</label>
+          <select id="rec-bqt"><option value="">Selecione</option><option>Brigadeiro</option><option>Mousse de Limão</option><option>Ninho</option><option>Doce de Leite</option><option>Churros</option><option>Oreo</option><option>Chocolate ao leite</option><option>Mousse de Maracujá</option><option>Caramelo Salgado</option><option>Mousse de Morango</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Quantidade</label>
+          <div class="qty-c">
+            <button class="qbtn" onclick="sqty('qty-bqt',-1,()=>calcBoloQ('t'))">−</button>
+            <input class="qinput" type="number" id="qty-bqt" value="1" min="1" onchange="calcBoloQ('t')">
+            <button class="qbtn" onclick="sqty('qty-bqt',1,()=>calcBoloQ('t'))">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="isub" id="sub-bqt">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <div class="pcard" id="card-bqp">
+    <div class="pheader">
+      <div class="pcheck" id="chk-bqp" onclick="tgSimples('bqp')"></div>
+      <div class="pinfo">
+        <div class="pnome">Bolo Quadrado Premium</div>
+        <div class="pdesc">Recheios premium disponíveis</div>
+      </div>
+      <div class="ppreco">a partir de R$240</div>
+    </div>
+    <div class="pconfig" id="cfg-bqp">
+      <div class="clinha">
+        <div class="cgrupo"><label>Tamanho</label>
+          <select id="tam-bqp" onchange="calcBoloQ('p')"><option value="">Selecione</option><option value="20x20|240">20×20 cm — R$240</option><option value="25x25|360">25×25 cm — R$360</option><option value="30x30|490">30×30 cm — R$490</option><option value="40x40|790">40×40 cm — R$790</option></select>
+        </div>
+        <div class="cgrupo"><label>Decoração</label>
+          <select id="dec-bqp" onchange="calcBoloQ('p')"><option value="">Selecione</option><option>Chantininho</option><option value="Ganache+">Ganache</option><option value="Pasta Americana+">Pasta Americana</option><option value="Buttercream+">Buttercream</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Recheio</label>
+          <select id="rec-bqp"><option value="">Selecione</option><option>Crocante de Nozes</option><option>Praliné</option><option>Mousse de Conhaque</option><option>Rafaello c/ amêndoas</option><option>Creme Brulée</option><option>Mousse de Albino</option><option>Chocolate Belga</option><option>Frutas Vermelhas</option><option>Mousse de Pistache</option></select>
+        </div>
+        <div class="cgrupo"><label>Quantidade</label>
+          <div class="qty-c">
+            <button class="qbtn" onclick="sqty('qty-bqp',-1,()=>calcBoloQ('p'))">−</button>
+            <input class="qinput" type="number" id="qty-bqp" value="1" min="1" onchange="calcBoloQ('p')">
+            <button class="qbtn" onclick="sqty('qty-bqp',1,()=>calcBoloQ('p'))">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="isub" id="sub-bqp">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- BOLOS DE ANDAR -->
+  <div class="cat-titulo">Bolos de Andar</div>
+  <div class="pcard" id="card-ban">
+    <div class="pheader">
+      <div class="pcheck" id="chk-ban" onclick="tgSimples('ban')"></div>
+      <div class="pinfo">
+        <div class="pnome">Bolo de Andar</div>
+        <div class="pdesc">Decorações opcionais (flores, balões, toppers) cobradas à parte — consulte no WhatsApp</div>
+      </div>
+      <div class="ppreco">a partir de R$230</div>
+    </div>
+    <div class="pconfig" id="cfg-ban">
+      <div class="clinha">
+        <div class="cgrupo"><label>Linha</label>
+          <select id="lin-ban" onchange="updTamAndar()"><option value="">Selecione</option><option value="trad">Tradicional</option><option value="prem">Premium</option></select>
+        </div>
+        <div class="cgrupo"><label>Tamanho</label>
+          <select id="tam-ban" onchange="calcAndar()"><option value="">Selecione a linha primeiro</option></select>
+        </div>
+      </div>
+      <div class="clinha">
+        <div class="cgrupo"><label>Quantidade</label>
+          <div class="qty-c">
+            <button class="qbtn" onclick="sqty('qty-ban',-1,calcAndar)">−</button>
+            <input class="qinput" type="number" id="qty-ban" value="1" min="1" onchange="calcAndar()">
+            <button class="qbtn" onclick="sqty('qty-ban',1,calcAndar)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="isub" id="sub-ban">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- BRIGADEIROS -->
+  <div class="cat-titulo">Brigadeiros</div>
+  <div class="pcard on" id="card-brig" style="border-color:var(--verde)">
+    <div class="binfo">
+      <strong style="color:var(--verde)">Como funciona:</strong> escolha entre <strong>Cento (100 un.)</strong> ou <strong>Meio Cento (50 un.)</strong>.<br>
+      No Meio Cento com <strong>2 linhas diferentes</strong>, cada metade paga exatamente 50% do valor da sua linha — sem acréscimo.<br>
+      Se pedir meio cento de <strong>uma linha só</strong>, aplica-se +10% sobre o valor de 50 un.
+    </div>
+    <div class="btoggle">
+      <button class="tbtn on" id="btn-c100" onclick="setBrigMode(100)">Cento — 100 un.</button>
+      <button class="tbtn" id="btn-c50" onclick="setBrigMode(50)">Meio Cento — 50 un.</button>
+    </div>
+    <div id="brig-100"><div id="brig-linhas-100"></div></div>
+    <div id="brig-50" style="display:none">
+      <div style="font-size:.78rem;color:var(--texto-leve);margin-bottom:10px">Cada metade = 50 unidades. Combine até 2 linhas diferentes:</div>
+      <div id="brig-linhas-50"></div>
+      <button class="btn-dash" id="btn-add-mc" onclick="addMC()" style="display:none">+ Adicionar 2ª metade (linha diferente)</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+      <div style="font-size:.78rem;color:var(--texto-leve)">Total brigadeiros:</div>
+      <div class="isub" id="sub-brig" style="margin-top:0">R$ —</div>
+    </div>
+    <button class="btn-dash" onclick="addPedidoBrig()" style="margin-top:8px">+ Novo pedido de brigadeiros (outra quantidade)</button>
+  </div>
+  <div id="brig-extras"></div>
+
+  <!-- DOCES E CONFEITOS -->
+  <div class="cat-titulo">Doces e Confeitos</div>
+  <div style="font-size:.82rem;color:var(--texto-leve);margin-bottom:14px;line-height:1.6;background:var(--rosa);border-radius:8px;padding:10px 14px">
+    <strong style="color:var(--verde)">Mínimo 15 unidades por item.</strong><br>
+    Desconto progressivo: <strong>100+ un.</strong> = preço base &nbsp;·&nbsp; <strong>50–99 un.</strong> = +10% &nbsp;·&nbsp; <strong>15–49 un.</strong> = +21%
+  </div>
+
+  <!-- Trufas -->
+  <div class="pcard" id="card-truf">
+    <div class="pheader">
+      <div class="pcheck" id="chk-truf" onclick="tgDoce('truf')"></div>
+      <div class="pinfo" style="margin-left:12px">
+        <div class="pnome">Trufas</div>
+        <div class="pdesc">Sabores: Ninho · Oreo · Brigadeiro · Ovomaltine · Delícia de Uva</div>
+      </div>
+      <div class="ppreco">R$1,50/un</div>
+    </div>
+    <div class="pconfig" id="cfg-truf">
+      <div class="tab-preco" id="tab-truf"></div>
+      <div class="dqty"><label>Quantidade:</label>
+        <div class="qty-c"><button class="qbtn" onclick="sdoce('truf',-10)">−</button><input class="qinput" type="number" id="qty-truf" value="15" min="15" onchange="calcDoce('truf')"><button class="qbtn" onclick="sdoce('truf',10)">+</button></div>
+      </div>
+      <div class="dmin" id="dmin-truf">Mínimo de 15 unidades.</div>
+      <div class="dsab"><div>Sabores desejados:</div><input type="text" id="sab-truf" placeholder="Ex: 30 Ninho, 30 Oreo..."></div>
+      <div class="isub" id="sub-truf">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- Mini Churros -->
+  <div class="pcard" id="card-chur">
+    <div class="pheader">
+      <div class="pcheck" id="chk-chur" onclick="tgDoce('chur')"></div>
+      <div class="pinfo" style="margin-left:12px">
+        <div class="pnome">Mini Churros</div>
+        <div class="pdesc">Recheios: Doce de Leite · Brigadeiro · Ninho</div>
+      </div>
+      <div class="ppreco">R$1,20/un</div>
+    </div>
+    <div class="pconfig" id="cfg-chur">
+      <div class="tab-preco" id="tab-chur"></div>
+      <div class="dqty"><label>Quantidade:</label>
+        <div class="qty-c"><button class="qbtn" onclick="sdoce('chur',-10)">−</button><input class="qinput" type="number" id="qty-chur" value="15" min="15" onchange="calcDoce('chur')"><button class="qbtn" onclick="sdoce('chur',10)">+</button></div>
+      </div>
+      <div class="dmin" id="dmin-chur">Mínimo de 15 unidades.</div>
+      <div class="dsab"><div>Recheio(s):</div><input type="text" id="sab-chur" placeholder="Ex: 50 Doce de Leite, 50 Ninho..."></div>
+      <div class="isub" id="sub-chur">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- Mini Brownie -->
+  <div class="pcard" id="card-brow">
+    <div class="pheader">
+      <div class="pcheck" id="chk-brow" onclick="tgDoce('brow')"></div>
+      <div class="pinfo" style="margin-left:12px">
+        <div class="pnome">Mini Brownie</div>
+        <div class="pdesc">Recheios: Doce de Leite · Brigadeiro · Ninho</div>
+      </div>
+      <div class="ppreco">R$2,50/un</div>
+    </div>
+    <div class="pconfig" id="cfg-brow">
+      <div class="tab-preco" id="tab-brow"></div>
+      <div class="dqty"><label>Quantidade:</label>
+        <div class="qty-c"><button class="qbtn" onclick="sdoce('brow',-10)">−</button><input class="qinput" type="number" id="qty-brow" value="15" min="15" onchange="calcDoce('brow')"><button class="qbtn" onclick="sdoce('brow',10)">+</button></div>
+      </div>
+      <div class="dmin" id="dmin-brow">Mínimo de 15 unidades.</div>
+      <div class="dsab"><div>Recheio(s):</div><input type="text" id="sab-brow" placeholder="Ex: 50 Brigadeiro, 50 Ninho..."></div>
+      <div class="isub" id="sub-brow">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- Mini Brookie -->
+  <div class="pcard" id="card-broo">
+    <div class="pheader">
+      <div class="pcheck" id="chk-broo" onclick="tgDoce('broo')"></div>
+      <div class="pinfo" style="margin-left:12px">
+        <div class="pnome">Mini Brookie</div>
+        <div class="pdesc">Recheios: Doce de Leite · Brigadeiro · Ninho</div>
+      </div>
+      <div class="ppreco">R$2,90/un</div>
+    </div>
+    <div class="pconfig" id="cfg-broo">
+      <div class="tab-preco" id="tab-broo"></div>
+      <div class="dqty"><label>Quantidade:</label>
+        <div class="qty-c"><button class="qbtn" onclick="sdoce('broo',-10)">−</button><input class="qinput" type="number" id="qty-broo" value="15" min="15" onchange="calcDoce('broo')"><button class="qbtn" onclick="sdoce('broo',10)">+</button></div>
+      </div>
+      <div class="dmin" id="dmin-broo">Mínimo de 15 unidades.</div>
+      <div class="dsab"><div>Recheio(s):</div><input type="text" id="sab-broo" placeholder="Doce de Leite, Brigadeiro..."></div>
+      <div class="isub" id="sub-broo">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- Copinhos -->
+  <div class="pcard" id="card-copi">
+    <div class="pheader">
+      <div class="pcheck" id="chk-copi" onclick="tgDoce('copi')"></div>
+      <div class="pinfo" style="margin-left:12px">
+        <div class="pnome">Copinhos de Chocolate</div>
+        <div class="pdesc">Recheios: Ganache de Limão Siciliano · Ganache de Maracujá · Creme Paris c/ Frutas Vermelhas · Creme de Pistache · Doce de Leite Praliné · Creme de Cereja · Ganache de Nutella</div>
+      </div>
+      <div class="ppreco">R$3,20/un</div>
+    </div>
+    <div class="pconfig" id="cfg-copi">
+      <div class="tab-preco" id="tab-copi"></div>
+      <div class="dqty"><label>Quantidade:</label>
+        <div class="qty-c"><button class="qbtn" onclick="sdoce('copi',-10)">−</button><input class="qinput" type="number" id="qty-copi" value="15" min="15" onchange="calcDoce('copi')"><button class="qbtn" onclick="sdoce('copi',10)">+</button></div>
+      </div>
+      <div class="dmin" id="dmin-copi">Mínimo de 15 unidades.</div>
+      <div class="dsab"><div>Recheio(s):</div><input type="text" id="sab-copi" placeholder="Ex: 50 Ganache de Nutella, 50 Creme de Pistache..."></div>
+      <div class="isub" id="sub-copi">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- Bolo no Marmitex -->
+  <div class="pcard" id="card-marm">
+    <div class="pheader">
+      <div class="pcheck" id="chk-marm" onclick="tgDoce('marm')"></div>
+      <div class="pinfo" style="margin-left:12px">
+        <div class="pnome">Bolo no Marmitex</div>
+        <div class="pdesc">250ml · Sabores a combinar</div>
+      </div>
+      <div class="ppreco">R$3,50/un</div>
+    </div>
+    <div class="pconfig" id="cfg-marm">
+      <div class="tab-preco" id="tab-marm"></div>
+      <div class="dqty"><label>Quantidade:</label>
+        <div class="qty-c"><button class="qbtn" onclick="sdoce('marm',-5)">−</button><input class="qinput" type="number" id="qty-marm" value="15" min="15" onchange="calcDoce('marm')"><button class="qbtn" onclick="sdoce('marm',5)">+</button></div>
+      </div>
+      <div class="dmin" id="dmin-marm">Mínimo de 15 unidades.</div>
+      <div class="isub" id="sub-marm">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- DOCES AVULSOS -->
+  <div class="cat-titulo">Doces Avulsos (por unidade)</div>
+  <div style="font-size:.82rem;color:var(--texto-leve);margin-bottom:14px;line-height:1.6">
+    Mínimo 15 unidades por item · Mesma tabela progressiva.
+  </div>
+
+  <!-- Bem-casado -->
+  <div class="pcard" id="card-bemc"><div class="pheader"><div class="pcheck" id="chk-bemc" onclick="tgDoce('bemc')"></div><div class="pinfo" style="margin-left:12px"><div class="pnome">Bem-casado</div></div><div class="ppreco">R$4,00/un</div></div>
+    <div class="pconfig" id="cfg-bemc"><div class="tab-preco" id="tab-bemc"></div><div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('bemc',-5)">−</button><input class="qinput" type="number" id="qty-bemc" value="15" min="15" onchange="calcDoce('bemc')"><button class="qbtn" onclick="sdoce('bemc',5)">+</button></div></div><div class="dmin" id="dmin-bemc">Mínimo de 15 unidades.</div><div class="isub" id="sub-bemc">Subtotal: R$ —</div></div>
+  </div>
+
+  <!-- Mini Tartalette -->
+  <div class="pcard" id="card-tart"><div class="pheader"><div class="pcheck" id="chk-tart" onclick="tgDoce('tart')"></div><div class="pinfo" style="margin-left:12px"><div class="pnome">Mini Tartalette</div></div><div class="ppreco">R$3,00/un</div></div>
+    <div class="pconfig" id="cfg-tart"><div class="tab-preco" id="tab-tart"></div><div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('tart',-5)">−</button><input class="qinput" type="number" id="qty-tart" value="15" min="15" onchange="calcDoce('tart')"><button class="qbtn" onclick="sdoce('tart',5)">+</button></div></div><div class="dmin" id="dmin-tart">Mínimo de 15 unidades.</div><div class="isub" id="sub-tart">Subtotal: R$ —</div></div>
+  </div>
+
+  <!-- Mini Cheesecake -->
+  <div class="pcard" id="card-chee"><div class="pheader"><div class="pcheck" id="chk-chee" onclick="tgDoce('chee')"></div><div class="pinfo" style="margin-left:12px"><div class="pnome">Mini Cheesecake</div></div><div class="ppreco">R$3,00/un</div></div>
+    <div class="pconfig" id="cfg-chee"><div class="tab-preco" id="tab-chee"></div><div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('chee',-5)">−</button><input class="qinput" type="number" id="qty-chee" value="15" min="15" onchange="calcDoce('chee')"><button class="qbtn" onclick="sdoce('chee',5)">+</button></div></div><div class="dmin" id="dmin-chee">Mínimo de 15 unidades.</div><div class="isub" id="sub-chee">Subtotal: R$ —</div></div>
+  </div>
+
+  <!-- Camafeu de Nozes -->
+  <div class="pcard" id="card-cama"><div class="pheader"><div class="pcheck" id="chk-cama" onclick="tgDoce('cama')"></div><div class="pinfo" style="margin-left:12px"><div class="pnome">Camafeu de Nozes</div></div><div class="ppreco">R$3,50/un</div></div>
+    <div class="pconfig" id="cfg-cama"><div class="tab-preco" id="tab-cama"></div><div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('cama',-5)">−</button><input class="qinput" type="number" id="qty-cama" value="15" min="15" onchange="calcDoce('cama')"><button class="qbtn" onclick="sdoce('cama',5)">+</button></div></div><div class="dmin" id="dmin-cama">Mínimo de 15 unidades.</div><div class="isub" id="sub-cama">Subtotal: R$ —</div></div>
+  </div>
+
+  <!-- Verrines -->
+  <div class="pcard" id="card-verr"><div class="pheader"><div class="pcheck" id="chk-verr" onclick="tgDoce('verr')"></div><div class="pinfo" style="margin-left:12px"><div class="pnome">Verrines</div></div><div class="ppreco">R$4,30/un</div></div>
+    <div class="pconfig" id="cfg-verr"><div class="tab-preco" id="tab-verr"></div><div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('verr',-5)">−</button><input class="qinput" type="number" id="qty-verr" value="15" min="15" onchange="calcDoce('verr')"><button class="qbtn" onclick="sdoce('verr',5)">+</button></div></div><div class="dmin" id="dmin-verr">Mínimo de 15 unidades.</div><div class="isub" id="sub-verr">Subtotal: R$ —</div></div>
+  </div>
+
+  <!-- Mini Donuts -->
+  <div class="pcard" id="card-donu"><div class="pheader"><div class="pcheck" id="chk-donu" onclick="tgDoce('donu')"></div><div class="pinfo" style="margin-left:12px"><div class="pnome">Mini Donuts</div></div><div class="ppreco">R$3,00/un</div></div>
+    <div class="pconfig" id="cfg-donu"><div class="tab-preco" id="tab-donu"></div><div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('donu',-5)">−</button><input class="qinput" type="number" id="qty-donu" value="15" min="15" onchange="calcDoce('donu')"><button class="qbtn" onclick="sdoce('donu',5)">+</button></div></div><div class="dmin" id="dmin-donu">Mínimo de 15 unidades.</div><div class="isub" id="sub-donu">Subtotal: R$ —</div></div>
+  </div>
+
+  <!-- Cupcake -->
+  <div class="pcard" id="card-cupc"><div class="pheader"><div class="pcheck" id="chk-cupc" onclick="tgDoce('cupc')"></div><div class="pinfo" style="margin-left:12px"><div class="pnome">Cupcake</div></div><div class="ppreco">R$4,00/un</div></div>
+    <div class="pconfig" id="cfg-cupc"><div class="tab-preco" id="tab-cupc"></div><div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('cupc',-5)">−</button><input class="qinput" type="number" id="qty-cupc" value="15" min="15" onchange="calcDoce('cupc')"><button class="qbtn" onclick="sdoce('cupc',5)">+</button></div></div><div class="dmin" id="dmin-cupc">Mínimo de 15 unidades.</div><div class="isub" id="sub-cupc">Subtotal: R$ —</div></div>
+  </div>
+
+  <!-- Maçã do Amor -->
+  <div class="pcard" id="card-maca">
+    <div class="pheader">
+      <div class="pcheck" id="chk-maca" onclick="tgDoce('maca')"></div>
+      <div class="pinfo" style="margin-left:12px">
+        <div class="pnome">Maçã do Amor</div>
+        <div class="pdesc">Clássica R$3 · Chocolate R$9 · Pasta Americana R$7</div>
+      </div>
+      <div class="ppreco">R$3–R$9/un</div>
+    </div>
+    <div class="pconfig" id="cfg-maca">
+      <div class="clinha"><div class="cgrupo"><label>Tipo</label>
+        <select id="tipo-maca" onchange="calcDoce('maca')"><option value="3">Clássica — R$3,00/un</option><option value="7">Pasta Americana — R$7,00/un</option><option value="9">Chocolate — R$9,00/un</option></select>
+      </div></div>
+      <div class="tab-preco" id="tab-maca"></div>
+      <div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('maca',-5)">−</button><input class="qinput" type="number" id="qty-maca" value="15" min="15" onchange="calcDoce('maca')"><button class="qbtn" onclick="sdoce('maca',5)">+</button></div></div>
+      <div class="dmin" id="dmin-maca">Mínimo de 15 unidades.</div>
+      <div class="isub" id="sub-maca">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- Mini Cone -->
+  <div class="pcard" id="card-cone">
+    <div class="pheader">
+      <div class="pcheck" id="chk-cone" onclick="tgDoce('cone')"></div>
+      <div class="pinfo" style="margin-left:12px">
+        <div class="pnome">Mini Cone</div>
+        <div class="pdesc">Sabores: Ninho c/ Nutella · Ferreiro Rocher · Oreo · Ninho · Beijinho</div>
+      </div>
+      <div class="ppreco">R$4,00/un</div>
+    </div>
+    <div class="pconfig" id="cfg-cone">
+      <div class="tab-preco" id="tab-cone"></div>
+      <div class="dqty"><label>Quantidade:</label><div class="qty-c"><button class="qbtn" onclick="sdoce('cone',-5)">−</button><input class="qinput" type="number" id="qty-cone" value="15" min="15" onchange="calcDoce('cone')"><button class="qbtn" onclick="sdoce('cone',5)">+</button></div></div>
+      <div class="dmin" id="dmin-cone">Mínimo de 15 unidades.</div>
+      <div class="dsab"><div>Sabores:</div><input type="text" id="sab-cone" placeholder="Ex: 20 Ninho, 20 Oreo, 15 Beijinho..."></div>
+      <div class="isub" id="sub-cone">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- Brownie Aro 25 -->
+  <div class="cat-titulo">Outros</div>
+  <div class="pcard" id="card-baro">
+    <div class="pheader">
+      <div class="pcheck" id="chk-baro" onclick="tgSimples('baro')"></div>
+      <div class="pinfo">
+        <div class="pnome">Brownie Aro 25</div>
+        <div class="pdesc">Recheios: Doce de leite · Brigadeiro · Ninho</div>
+      </div>
+      <div class="ppreco">R$140,00</div>
+    </div>
+    <div class="pconfig" id="cfg-baro">
+      <div class="clinha">
+        <div class="cgrupo"><label>Recheio</label><select id="rec-baro"><option>Doce de leite</option><option>Brigadeiro</option><option>Ninho</option></select></div>
+        <div class="cgrupo"><label>Quantidade</label><div class="qty-c"><button class="qbtn" onclick="sqty('qty-baro',-1,calcBaro)">−</button><input class="qinput" type="number" id="qty-baro" value="1" min="1" onchange="calcBaro()"><button class="qbtn" onclick="sqty('qty-baro',1,calcBaro)">+</button></div></div>
+      </div>
+      <div class="isub" id="sub-baro">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+  <!-- Kits Festa -->
+  <div class="pcard" id="card-kit">
+    <div class="pheader">
+      <div class="pcheck" id="chk-kit" onclick="tgSimples('kit')"></div>
+      <div class="pinfo">
+        <div class="pnome">Kit Festa Promocional</div>
+        <div class="pdesc">Mini (até 10p) R$170 · Kit P (até 15p) R$275 · Kit M (até 25p) R$409 · Kit G (até 30p) R$525</div>
+      </div>
+      <div class="ppreco">R$170–R$525</div>
+    </div>
+    <div class="pconfig" id="cfg-kit">
+      <div class="clinha">
+        <div class="cgrupo"><label>Tamanho</label><select id="tam-kit" onchange="calcKit()"><option value="">Selecione</option><option value="170">Kit Mini — até 10 pessoas</option><option value="275">Kit P — até 15 pessoas</option><option value="409">Kit M — até 25 pessoas</option><option value="525">Kit G — até 30 pessoas</option></select></div>
+        <div class="cgrupo"><label>Quantidade</label><div class="qty-c"><button class="qbtn" onclick="sqty('qty-kit',-1,calcKit)">−</button><input class="qinput" type="number" id="qty-kit" value="1" min="1" onchange="calcKit()"><button class="qbtn" onclick="sqty('qty-kit',1,calcKit)">+</button></div></div>
+      </div>
+      <div class="isub" id="sub-kit">Subtotal: R$ —</div>
+    </div>
+  </div>
+
+</div><!-- fim secao -->
+
+<!-- TOTAL -->
+<div class="total-box">
+  <div>
+    <div class="tl">Total estimado</div>
+    <div class="ts">Sinal de 50%: <span id="val-sinal">R$ —</span></div>
+  </div>
+  <div class="tv" id="total-geral">R$ 0,00</div>
+</div>
+
+<!-- 4. OBS -->
+<div class="secao">
+  <div class="secao-titulo"><span class="num">4</span> Observações gerais</div>
+  <div class="campo"><textarea id="obs-geral" placeholder="Tema do evento, personalização, alergias, outras informações..."></textarea></div>
+</div>
+
+<div class="aviso-f">
+  Ao enviar, você receberá um resumo do pedido.<br>
+  <strong>Entraremos em contato pelo WhatsApp para confirmar e recolher o sinal de 50%.</strong><br>
+  Formas de pagamento: Pix, dinheiro, débito, crédito ou link de pagamento.
+</div>
+
+<button class="btn-env" id="btn-env" onclick="enviar()">Enviar pedido</button>
+
+<div id="resumo">
+  <div class="rtitulo">✓ Pedido enviado!</div>
+  <div class="rsub">Confira o resumo da sua encomenda</div>
+  <div class="rbloco"><strong>Seus dados</strong><div id="r-dados"></div></div>
+  <div class="rbloco"><strong>Data de retirada</strong><div id="r-data"></div></div>
+  <div class="rbloco" style="padding:14px 16px"><strong>Itens do pedido</strong><div id="r-itens"></div></div>
+  <div class="rtotal"><div class="rl">Total estimado</div><div class="rv" id="r-total"></div></div>
+  <div class="raviso">⚠️ <strong>Lembre-se:</strong> seu pedido só é confirmado após o pagamento do sinal de 50%.<br>Entraremos em contato em breve pelo WhatsApp!</div>
+</div>
+
+</div><!-- fim container -->
+<footer>Noyers Confeitaria Artesanal &nbsp;·&nbsp; Feito sob encomenda</footer>
+
+<script>
+// ============================================================
+// UTILS
+// ============================================================
+const PR = {};
+const AT = new Set();
+const fmt = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function updTotal(){
+  let t=0; Object.values(PR).forEach(v=>t+=(v||0));
+  document.getElementById('total-geral').textContent=fmt(t);
+  document.getElementById('val-sinal').textContent=fmt(t/2);
+}
+
+function sqty(id,d,cb){const el=document.getElementById(id);el.value=Math.max(1,parseInt(el.value||1)+d);cb();}
+
+// DATA
+(function(){
+  const min=new Date(); min.setDate(min.getDate()+5);
+  const iso=min.toISOString().split('T')[0];
+  const inp=document.getElementById('data-ret');
+  inp.min=iso;
+  document.getElementById('data-min-txt').textContent=min.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  inp.addEventListener('change',function(){
+    const ok=this.value&&new Date(this.value+'T00:00:00')>=min;
+    document.getElementById('av-data').classList.toggle('vis',this.value&&!ok);
+    this.classList.toggle('campo-erro',this.value&&!ok);
+  });
+})();
+
+// ============================================================
+// TOGGLE SIMPLES
+// ============================================================
+function tgSimples(id){
+  const on=AT.has(id);
+  document.getElementById('chk-'+id).classList.toggle('on',!on);
+  document.getElementById('cfg-'+id).classList.toggle('vis',!on);
+  document.getElementById('card-'+id).classList.toggle('on',!on);
+  if(on){AT.delete(id);PR[id]=0;document.getElementById('sub-'+id).textContent='Subtotal: R$ —';}
+  else AT.add(id);
+  updTotal();
+}
+
+// ============================================================
+// BOLOS
+// ============================================================
+function aro(cm){return cm<=20?30:cm<=35?50:80;}
+
+// Adicional de decoração premium por cm
+function adicDecoracao(dec, cm){
+  if(!dec||dec===''||dec==='Chantininho') return 0;
+  const MAP={8:0,15:1,20:2,25:3,30:4,35:5,40:6};
+  const idx=MAP[cm];
+  if(idx===undefined) return 0;
+  if(dec==='Buttercream+') return [15,15,30,45,60,60,75][idx];
+  if(dec==='Ganache+'||dec==='Pasta Americana+') return [10,20,30,40,50,50,60][idx];
+  return 0;
+}
+function nomeDecoracao(dec){ return dec?dec.replace('+',''):dec; }
+
+function calcBoloR(l){
+  const id='br'+l;
+  if(!AT.has(id))return;
+  const tv=document.getElementById('tam-br'+l).value;
+  if(!tv){PR[id]=0;document.getElementById('sub-'+id).textContent='Subtotal: R$ —';updTotal();return;}
+  const[cm,base]=tv.split('|').map(Number);
+  let ex=0;
+  if(document.getElementById('alt-br'+l).value==='aro')ex+=aro(cm);
+  ex+=parseInt(document.getElementById('fru-br'+l).value||0);
+  ex+=parseInt(document.getElementById('adi-br'+l).value||0);
+  const dec=document.getElementById('dec-br'+l).value;
+  const adDec=adicDecoracao(dec,cm);
+  ex+=adDec;
+  const q=parseInt(document.getElementById('qty-br'+l).value||1);
+  PR[id]=(base+ex)*q;
+  let subTxt='Subtotal: '+fmt(PR[id]);
+  if(adDec>0) subTxt+=` <span style="font-size:.75rem;color:#c07000">(inclui +${fmt(adDec)} decoração ${nomeDecoracao(dec)})</span>`;
+  document.getElementById('sub-'+id).innerHTML=subTxt;
+  updTotal();
+}
+
+function calcBoloQ(l){
+  const id='bq'+l;
+  if(!AT.has(id))return;
+  const tv=document.getElementById('tam-bq'+l).value;
+  if(!tv){PR[id]=0;document.getElementById('sub-'+id).textContent='Subtotal: R$ —';updTotal();return;}
+  const[tam,base]=tv.split('|');
+  const cm=parseInt(tam);
+  const dec=document.getElementById('dec-bq'+l)?.value||'';
+  const adDec=adicDecoracao(dec,cm);
+  const q=parseInt(document.getElementById('qty-bq'+l).value||1);
+  PR[id]=(parseInt(base)+adDec)*q;
+  let subTxt='Subtotal: '+fmt(PR[id]);
+  if(adDec>0) subTxt+=` <span style="font-size:.75rem;color:#c07000">(inclui +${fmt(adDec)} decoração ${nomeDecoracao(dec)})</span>`;
+  document.getElementById('sub-'+id).innerHTML=subTxt;
+  updTotal();
+}
+
+function updTamAndar(){
+  const l=document.getElementById('lin-ban').value;
+  const sel=document.getElementById('tam-ban');
+  sel.innerHTML='<option value="">Selecione</option>';
+  const opts=l==='trad'
+    ?[['230','Pequeno (08|15cm) — R$230 · 15/20 fatias'],['380','Médio Clássico (15|20cm) — R$380 · 35/40 fatias'],['520','Grande Vip (20|25cm) — R$520 · 60/70 fatias'],['680','Mega Festa — R$680 · 75/85 fatias']]
+    :[['290','Pequeno (08|15cm) — R$290 · 15/20 fatias'],['490','Médio Clássico (15|20cm) — R$490 · 35/40 fatias'],['670','Grande Vip (20|25cm) — R$670 · 60/70 fatias'],['860','Mega Festa — R$860 · 75/85 fatias']];
+  opts.forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;sel.appendChild(o);});
+  calcAndar();
+}
+function calcAndar(){
+  if(!AT.has('ban'))return;
+  const v=document.getElementById('tam-ban').value;
+  if(!v){PR['ban']=0;document.getElementById('sub-ban').textContent='Subtotal: R$ —';updTotal();return;}
+  const q=parseInt(document.getElementById('qty-ban').value||1);
+  PR['ban']=parseInt(v)*q;
+  document.getElementById('sub-ban').textContent='Subtotal: '+fmt(PR['ban']);
+  updTotal();
+}
+function calcBaro(){
+  if(!AT.has('baro'))return;
+  PR['baro']=140*parseInt(document.getElementById('qty-baro').value||1);
+  document.getElementById('sub-baro').textContent='Subtotal: '+fmt(PR['baro']);
+  updTotal();
+}
+function calcKit(){
+  if(!AT.has('kit'))return;
+  const v=document.getElementById('tam-kit').value;
+  if(!v){PR['kit']=0;document.getElementById('sub-kit').textContent='Subtotal: R$ —';updTotal();return;}
+  const q=parseInt(document.getElementById('qty-kit').value||1);
+  PR['kit']=parseInt(v)*q;
+  document.getElementById('sub-kit').textContent='Subtotal: '+fmt(PR['kit']);
+  updTotal();
+}
+
+// ============================================================
+// BRIGADEIROS
+// ============================================================
+const BL={
+  trad:{nome:'Tradicional',preco:90,sabores:['Romeu e Julieta','Cajuzinho','Ninho','Brigadeiro','Morango','Paçoca','Beijinho','Casadinho','Amendoim']},
+  clas:{nome:'Clássico',preco:110,sabores:['Mousse de Limão','Pérola de Ninho','Caramelo Salgado','Churros','Maracujá','M&M','Delícia de Uva']},
+  gour:{nome:'Gourmet',preco:185,sabores:['Ninho c/ Nutella','Ferreiro Rocher','Kinder Bueno','Torta de Limão','Ovomaltine','Alexander','Oreo']},
+  fino:{nome:'Doces Finos',preco:230,sabores:['Pistache','Rafaello','Belga Clássico','Coco Queimado','Merengue Suíço','Creme Brûlée','Pérola de Vinho','Framora Branco','Ganache Siciliano']},
+};
+
+let bMode=100;
+const BSel={}; // chave "linha-contexto" -> Set
+
+function setBrigMode(m){
+  bMode=m;
+  document.getElementById('btn-c100').classList.toggle('on',m===100);
+  document.getElementById('btn-c50').classList.toggle('on',m===50);
+  document.getElementById('brig-100').style.display=m===100?'block':'none';
+  document.getElementById('brig-50').style.display=m===50?'block':'none';
+  if(m===100&&!document.getElementById('brig-linhas-100').children.length) renderLinhas100();
+  if(m===50&&!document.getElementById('brig-linhas-50').children.length) addMC();
+  calcBrig();
+}
+
+function renderLinhas100(){
+  const c=document.getElementById('brig-linhas-100');c.innerHTML='';
+  Object.entries(BL).forEach(([k,v])=>c.appendChild(mkLinhaCard(k,'c100')));
+}
+
+function mkLinhaCard(lk,ctx){
+  const cfg=BL[lk];
+  const preco=ctx.startsWith('mc')?fmt(cfg.preco/2)+' (50 un.)':fmt(cfg.preco)+' (100 un.)';
+  const div=document.createElement('div');
+  div.className='blinha-card';div.id='blc-'+lk+'-'+ctx;
+  const sabHTML=cfg.sabores.map(s=>{
+    const sid='bs-'+lk+'-'+ctx+'-'+s.replace(/[^a-zA-Z]/g,'_');
+    return `<div class="bsab-item" id="${sid}" onclick="tgSab('${lk}','${ctx}','${s}')"><div class="bsab-chk"></div><span>${s}</span></div>`;
+  }).join('');
+  div.innerHTML=`<div class="blinha-nome">${cfg.nome} — ${preco}</div>${ctx==='c100'?'<div style="font-size:.75rem;color:var(--texto-leve);margin-bottom:8px">Selecione até 4 sabores (25 un. cada). 2 sabores = 50+50 · 1 sabor = 100 un.</div>':ctx.startsWith('mc')?'<div style="font-size:.75rem;color:var(--texto-leve);margin-bottom:8px">Selecione até 2 sabores (25 un. cada). 1 sabor = 50 un.</div>':''}<div class="bsab-grid">${sabHTML}</div><div class="bcnt" id="bcnt-${lk}-${ctx}">Nenhum sabor selecionado</div>`;
+  return div;
+}
+
+function tgSab(lk,ctx,s){
+  const k=lk+'-'+ctx;
+  if(!BSel[k])BSel[k]=new Set();
+  const st=BSel[k];
+  const sid='bs-'+lk+'-'+ctx+'-'+s.replace(/[^a-zA-Z]/g,'_');
+  const el=document.getElementById(sid);if(!el)return;
+
+  // No modo cento (c100): máximo 4 sabores | meio cento (mc): máximo 2
+  const isCento=ctx==='c100';
+  const isMeio=ctx.startsWith('mc');
+  const maxSab=isCento?4:isMeio?2:99;
+  if(!st.has(s)&&st.size>=maxSab){
+    const avEl=document.getElementById('bcnt-'+lk+'-'+ctx);
+    if(avEl){
+      avEl.innerHTML=`<span style="color:var(--erro)">Máximo ${maxSab} sabores. Desmarque um para trocar.</span>`;
+      setTimeout(()=>{
+        if(avEl)avEl.innerHTML=st.size?`<span>${descrSabores(st,isCento)}</span>`:'Nenhum sabor selecionado';
+      },2000);
+    }
+    return;
+  }
+
+  if(st.has(s)){st.delete(s);el.classList.remove('on');el.querySelector('.bsab-chk').textContent='';}
+  else{st.add(s);el.classList.add('on');el.querySelector('.bsab-chk').textContent='✓';}
+
+  const cnt=document.getElementById('bcnt-'+lk+'-'+ctx);
+  if(cnt){
+    if(st.size===0) cnt.innerHTML='Nenhum sabor selecionado';
+    else cnt.innerHTML=`<span>${descrSabores(st,isCento)}</span>`;
+  }
+  calcBrig();
+}
+
+function descrSabores(st, isCento){
+  const arr=[...st];
+  if(!isCento) {
+    // meio cento: máx 2
+    if(arr.length===1) return `50× ${arr[0]}`;
+    if(arr.length===2) return `25× ${arr[0]} · 25× ${arr[1]}`;
+    return arr.join(', ');
+  }
+  // cento: até 4 sabores, 100 unidades divididas igualmente
+  if(arr.length===1) return `100× ${arr[0]}`;
+  if(arr.length===2) return `50× ${arr[0]} · 50× ${arr[1]}`;
+  if(arr.length===3) return `34× ${arr[0]} · 33× ${arr[1]} · 33× ${arr[2]}`;
+  if(arr.length===4) return `25× ${arr[0]} · 25× ${arr[1]} · 25× ${arr[2]} · 25× ${arr[3]}`;
+  return arr.join(', ');
+}
+
+// Meio cento
+let mcCount=0;
+const mcLinhas=[];
+
+function addMC(){
+  if(mcLinhas.length>=2)return;
+  const idx=mcCount++;
+  mcLinhas.push({idx,lk:null});
+  const c=document.getElementById('brig-linhas-50');
+  const wrap=document.createElement('div');
+  wrap.id='mc-wrap-'+idx;wrap.className='mc-bloco';
+  const optsHTML=Object.entries(BL).map(([k,v])=>`<option value="${k}">${v.nome} — ${fmt(v.preco/2)} (50 un.)</option>`).join('');
+  wrap.innerHTML=`
+    <div class="mc-titulo">${mcLinhas.length===1?'1ª':'2ª'} Metade — 50 unidades</div>
+    <div class="mc-linha">
+      <select id="mc-sel-${idx}" onchange="mcSel(${idx})"><option value="">Selecione a linha</option>${optsHTML}</select>
+      <span class="mc-preco" id="mc-p-${idx}"></span>
+      ${mcLinhas.length>1?`<button type="button" class="btn-rm" onclick="rmMC(${idx})">✕</button>`:''}
+    </div>
+    <div id="mc-sabs-${idx}"></div>`;
+  c.appendChild(wrap);
+  const btn=document.getElementById('btn-add-mc');
+  btn.style.display=mcLinhas.length<2?'block':'none';
+  calcBrig();
+}
+
+function rmMC(idx){
+  document.getElementById('mc-wrap-'+idx)?.remove();
+  const i=mcLinhas.findIndex(x=>x.idx===idx);if(i>-1)mcLinhas.splice(i,1);
+  document.getElementById('btn-add-mc').style.display='block';
+  calcBrig();
+}
+
+function mcSel(idx){
+  const lk=document.getElementById('mc-sel-'+idx).value;
+  const rec=mcLinhas.find(x=>x.idx===idx);if(rec)rec.lk=lk;
+  const p=document.getElementById('mc-p-'+idx);
+  const sc=document.getElementById('mc-sabs-'+idx);
+  sc.innerHTML='';
+  if(!lk){p.textContent='';calcBrig();return;}
+  p.textContent=fmt(BL[lk].preco/2);
+  const ctx='mc'+idx;
+  sc.appendChild(mkLinhaCard(lk,ctx));
+  calcBrig();
+}
+
+function calcBrig(){
+  let tot=0;
+  if(bMode===100){
+    // Cento completo: preço cheio por linha com ao menos 1 sabor
+    Object.keys(BL).forEach(k=>{
+      const s=BSel[k+'-c100'];
+      if(s&&s.size>0)tot+=BL[k].preco;
+    });
+  } else {
+    // Meio cento: se 2 linhas combinadas, cada uma paga 50% sem acréscimo
+    // Se apenas 1 linha, paga 50% + 10%
+    const ativas=mcLinhas.filter(x=>x.lk);
+    if(ativas.length===2){
+      ativas.forEach(({lk})=>{ tot+=BL[lk].preco/2; });
+    } else if(ativas.length===1){
+      tot+=BL[ativas[0].lk].preco/2*1.1;
+    }
+  }
+  PR['brig']=tot;
+  let subTxt=tot>0?fmt(tot):'R$ —';
+  if(bMode===50&&mcLinhas.filter(x=>x.lk).length===1) subTxt+=' <span style="font-size:.75rem;color:#c07000">(+10% meio cento isolado)</span>';
+  document.getElementById('sub-brig').innerHTML=tot>0?subTxt:'R$ —';
+  updTotal();
+}
+
+// Novo pedido brigadeiros (outra linha/modo)
+function addPedidoBrig(){
+  alert('Para pedidos adicionais com configurações diferentes, entre em contato pelo WhatsApp após enviar este formulário.');
+}
+
+// Inicializar
+setBrigMode(100);
+
+// ============================================================
+// DOCES PROGRESSIVOS
+// ============================================================
+const DB={
+  truf:1.5,chur:1.2,brow:2.5,broo:2.9,copi:3.2,marm:3.5,
+  bemc:4,tart:3,chee:3,cama:3.5,verr:4.3,donu:3,cupc:4,maca:null,cone:4
+};
+
+function fator(q){if(q>=100)return 1;if(q>=50)return 1.10;return 1.21;}
+
+function getBase(id){
+  if(id==='maca'){const s=document.getElementById('tipo-maca');return s?parseFloat(s.value):3;}
+  return DB[id];
+}
+
+function renderTab(id,base){
+  const el=document.getElementById('tab-'+id);if(!el)return;
+  const q=parseInt(document.getElementById('qty-'+id)?.value||15);
+  const fs=[{mn:100,mx:'∞',f:1},{mn:50,mx:99,f:1.10},{mn:15,mx:49,f:1.21}];
+  el.innerHTML=fs.map(f=>{
+    const on=(q>=f.mn&&(f.mx==='∞'||q<=f.mx));
+    return `<div class="tab-faixa${on?' on':''}"><div class="fqtd">${f.mn}${f.mx==='∞'?'+':'–'+f.mx} un.</div><div class="fpreco">${fmt(base*f.f)}/un</div></div>`;
+  }).join('');
+}
+
+function calcDoce(id){
+  if(!AT.has(id))return;
+  const base=getBase(id);
+  const q=parseInt(document.getElementById('qty-'+id).value||0);
+  const av=document.getElementById('dmin-'+id);
+  if(q<15){if(av)av.classList.add('vis');PR[id]=0;document.getElementById('sub-'+id).textContent='Subtotal: R$ —';renderTab(id,base);updTotal();return;}
+  if(av)av.classList.remove('vis');
+  const tot=base*fator(q)*q;
+  PR[id]=tot;
+  document.getElementById('sub-'+id).textContent='Subtotal: '+fmt(tot)+' ('+fmt(base*fator(q))+'/un)';
+  renderTab(id,base);
+  updTotal();
+}
+
+function sdoce(id,d){
+  const inp=document.getElementById('qty-'+id);
+  inp.value=Math.max(15,parseInt(inp.value||15)+d);
+  calcDoce(id);
+}
+
+function tgDoce(id){
+  const on=AT.has(id);
+  document.getElementById('chk-'+id).classList.toggle('on',!on);
+  document.getElementById('cfg-'+id).classList.toggle('vis',!on);
+  document.getElementById('card-'+id).classList.toggle('on',!on);
+  if(on){AT.delete(id);PR[id]=0;document.getElementById('sub-'+id).textContent='Subtotal: R$ —';}
+  else{AT.add(id);renderTab(id,getBase(id));calcDoce(id);}
+  updTotal();
+}
+
+// ============================================================
+// VALIDAÇÃO
+// ============================================================
+function validar(){
+  let ok=true;
+  [{id:'nome',eid:'e-nome',fn:v=>v.trim().length>1},
+   {id:'telefone',eid:'e-tel',fn:v=>v.trim().length>=8},
+   {id:'email',eid:'e-email',fn:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())}
+  ].forEach(c=>{
+    const i=document.getElementById(c.id),e=document.getElementById(c.eid);
+    const v=c.fn(i.value);i.classList.toggle('campo-erro',!v);e.classList.toggle('vis',!v);if(!v)ok=false;
+  });
+  const di=document.getElementById('data-ret'),de=document.getElementById('e-data');
+  const mn=new Date();mn.setDate(mn.getDate()+5);
+  const dok=di.value&&new Date(di.value+'T00:00:00')>=mn;
+  di.classList.toggle('campo-erro',!dok);de.classList.toggle('vis',!dok);if(!dok)ok=false;
+  if(!Object.values(PR).some(v=>v>0)){alert('Selecione pelo menos um produto antes de enviar.');ok=false;}
+  if(!ok)document.querySelector('.campo-erro')?.scrollIntoView({behavior:'smooth',block:'center'});
+  return ok;
+}
+
+// ============================================================
+// ENVIO / RESUMO
+// ============================================================
+function enviar(){
+  if(!validar())return;
+  const nome=document.getElementById('nome').value.trim();
+  const tel=document.getElementById('telefone').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const data=document.getElementById('data-ret').value;
+  const obsD=document.getElementById('obs-data').value.trim();
+  const obsG=document.getElementById('obs-geral').value.trim();
+  const dataF=new Date(data+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+
+  document.getElementById('r-dados').innerHTML=`<b>${nome}</b><br>${tel}<br>${email}`;
+  document.getElementById('r-data').innerHTML=dataF+(obsD?`<br><span style="color:var(--texto-leve)">${obsD}</span>`:'');
+
+  const itens=[];
+  const add=(n,v,d='')=>{if(v>0)itens.push({n:d?n+' — '+d:n,v});};
+
+  // Bolos
+  if(PR['brt']>0)add('Bolo Redondo Tradicional',PR['brt']);
+  if(PR['brp']>0)add('Bolo Redondo Premium',PR['brp']);
+  if(PR['bqt']>0)add('Bolo Quadrado Tradicional',PR['bqt']);
+  if(PR['bqp']>0)add('Bolo Quadrado Premium',PR['bqp']);
+  if(PR['ban']>0)add('Bolo de Andar',PR['ban']);
+  if(PR['baro']>0)add('Brownie Aro 25',PR['baro']);
+  if(PR['kit']>0)add('Kit Festa',PR['kit']);
+
+  // Brigadeiros
+  if(PR['brig']>0){
+    let det='';
+    if(bMode===100){
+      Object.keys(BL).forEach(k=>{const s=BSel[k+'-c100'];if(s&&s.size>0)det+=BL[k].nome+': '+[...s].join(', ')+' · ';});
+    } else {
+      mcLinhas.forEach(({idx,lk})=>{if(!lk)return;const s=BSel[lk+'-mc'+idx];det+=BL[lk].nome+' (50un): '+(s&&s.size?[...s].join(', '):'-')+' · ';});
+    }
+    add('Brigadeiros',PR['brig'],det.replace(/ · $/,''));
+  }
+
+  // Doces
+  Object.keys(DB).forEach(id=>{
+    if(PR[id]>0){
+      const q=document.getElementById('qty-'+id)?.value||'';
+      const s=document.getElementById('sab-'+id)?.value||'';
+      const nomes={truf:'Trufas',chur:'Mini Churros',brow:'Mini Brownie',broo:'Mini Brookie',copi:'Copinhos de Chocolate',marm:'Bolo no Marmitex',bemc:'Bem-casado',tart:'Mini Tartalette',chee:'Mini Cheesecake',cama:'Camafeu de Nozes',verr:'Verrines',donu:'Mini Donuts',cupc:'Cupcake',maca:'Maçã do Amor',cone:'Mini Cone'};
+      add(nomes[id]||id,PR[id],q+' un.'+(s?' — '+s:''));
+    }
+  });
+
+  let tot=0;itens.forEach(i=>tot+=i.v);
+  document.getElementById('r-itens').innerHTML=
+    itens.map(i=>`<div class="ritem"><span class="ritem-n">${i.n}</span><span class="ritem-v">${fmt(i.v)}</span></div>`).join('')+
+    (obsG?`<div style="font-size:.82rem;color:var(--texto-leve);margin-top:8px;padding-top:8px;border-top:1px solid var(--borda)">Obs: ${obsG}</div>`:'');
+  document.getElementById('r-total').textContent=fmt(tot);
+
+  document.getElementById('resumo').classList.add('vis');
+  document.getElementById('btn-env').disabled=true;
+  document.getElementById('btn-env').textContent='Pedido enviado ✓';
+  document.getElementById('resumo').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
