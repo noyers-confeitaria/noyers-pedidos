@@ -225,7 +225,7 @@ footer{background:var(--verde);color:rgba(255,255,255,.5);text-align:center;font
           <select id="rec-brt"><option value="">Selecione</option><option>Brigadeiro</option><option>Mousse de Limão</option><option>Ninho</option><option>Doce de Leite</option><option>Churros</option><option>Oreo</option><option>Chocolate ao leite</option><option>Mousse de Maracujá</option><option>Caramelo Salgado</option><option>Mousse de Morango</option></select>
         </div>
         <div class="cgrupo"><label>Fruta opcional (+R$10)</label>
-          <select id="fru-brt" onchange="calcBoloR('t')"><option value="0">Sem fruta</option><option value="10">Ameixa</option><option value="10">Abacaxi</option><option value="10">Morango</option><option value="10">Amora</option><option value="10">Frambuesa</option><option value="10">Cereja</option></select>
+          <select id="fru-brt" onchange="calcBoloR('t')"><option value="0">Sem fruta</option><option value="10">Ameixa</option><option value="10">Abacaxi</option><option value="10">Morango</option><option value="10">Amora</option><option value="10">Framboesa</option><option value="10">Cereja</option></select>
         </div>
       </div>
       <div class="clinha">
@@ -275,7 +275,7 @@ footer{background:var(--verde);color:rgba(255,255,255,.5);text-align:center;font
           <select id="rec-brp"><option value="">Selecione</option><option>Crocante de Nozes</option><option>Praliné</option><option>Mousse de Conhaque</option><option>Rafaello c/ amêndoas</option><option>Creme Brulée</option><option>Mousse de Albino</option><option>Mousseline de Praliné</option><option>Chocolate Belga</option><option>Frutas Vermelhas</option><option>Mousse de Pistache</option></select>
         </div>
         <div class="cgrupo"><label>Fruta opcional (+R$15)</label>
-          <select id="fru-brp" onchange="calcBoloR('p')"><option value="0">Sem fruta</option><option value="15">Mirtilo</option><option value="15">Abacaxi</option><option value="15">Morango</option><option value="15">Amora</option><option value="15">Frambuesa</option><option value="15">Cereja</option></select>
+          <select id="fru-brp" onchange="calcBoloR('p')"><option value="0">Sem fruta</option><option value="15">Mirtilo</option><option value="15">Abacaxi</option><option value="15">Morango</option><option value="15">Amora</option><option value="15">Framboesa</option><option value="15">Cereja</option></select>
         </div>
       </div>
       <div class="clinha">
@@ -1166,14 +1166,21 @@ function enviar(){
   document.getElementById('resumo').classList.add('vis');
   document.getElementById('resumo').scrollIntoView({behavior:'smooth',block:'start'});
 
-  // Enviar para Apps Script em background via iframe
+  // Enviar para Apps Script via form oculto (contorna CORS)
   const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxpFB7_dL8kOY9K0VFaroshJk_BpXlt3TEX9x97WVfM_YZfo7vtuDXmcQ3E2xBm4cQg/exec';
-  const dadosEncoded=encodeURIComponent(JSON.stringify(payload));
-  const iframe=document.createElement('iframe');
-  iframe.style.display='none';
-  iframe.src=APPS_SCRIPT_URL+'?dados='+dadosEncoded;
-  document.body.appendChild(iframe);
-  setTimeout(()=>{ try{document.body.removeChild(iframe);}catch(e){} }, 10000);
+  const form=document.createElement('form');
+  form.method='GET';
+  form.action=APPS_SCRIPT_URL;
+  form.target='_blank';
+  form.style.display='none';
+  const input=document.createElement('input');
+  input.type='hidden';
+  input.name='dados';
+  input.value=JSON.stringify(payload);
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(()=>{ try{document.body.removeChild(form);}catch(e){} }, 3000);
 }
 </script>
 </body>
