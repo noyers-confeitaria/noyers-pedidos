@@ -1161,24 +1161,20 @@ function enviar(){
   btn.disabled=true;
   btn.textContent='Enviando...';
 
-  // Enviar para Apps Script via GET (evita bloqueio CORS)
+  // Enviar para Apps Script via iframe (contorna CORS)
   const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxpFB7_dL8kOY9K0VFaroshJk_BpXlt3TEX9x97WVfM_YZfo7vtuDXmcQ3E2xBm4cQg/exec';
   const dadosEncoded=encodeURIComponent(JSON.stringify(payload));
+  const iframe=document.createElement('iframe');
+  iframe.style.display='none';
+  iframe.src=APPS_SCRIPT_URL+'?dados='+dadosEncoded;
+  document.body.appendChild(iframe);
 
-  const img=new Image();
-  img.src=APPS_SCRIPT_URL+'?dados='+dadosEncoded;
-  img.onload=img.onerror=()=>{
-    btn.textContent='Pedido enviado ✓';
-    document.getElementById('resumo').classList.add('vis');
-    document.getElementById('resumo').scrollIntoView({behavior:'smooth',block:'start'});
-  };
-
-  // Fallback: mostrar resumo após 3 segundos mesmo sem resposta
   setTimeout(()=>{
     btn.textContent='Pedido enviado ✓';
     document.getElementById('resumo').classList.add('vis');
     document.getElementById('resumo').scrollIntoView({behavior:'smooth',block:'start'});
-  }, 3000);
+    document.body.removeChild(iframe);
+  }, 4000);
 }
 </script>
 </body>
