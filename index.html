@@ -1161,20 +1161,19 @@ function enviar(){
   btn.disabled=true;
   btn.textContent='Enviando...';
 
-  // Enviar para Apps Script via iframe (contorna CORS)
+  // Mostrar resumo imediatamente
+  btn.textContent='Pedido enviado ✓';
+  document.getElementById('resumo').classList.add('vis');
+  document.getElementById('resumo').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Enviar para Apps Script em background via iframe
   const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxpFB7_dL8kOY9K0VFaroshJk_BpXlt3TEX9x97WVfM_YZfo7vtuDXmcQ3E2xBm4cQg/exec';
   const dadosEncoded=encodeURIComponent(JSON.stringify(payload));
   const iframe=document.createElement('iframe');
   iframe.style.display='none';
   iframe.src=APPS_SCRIPT_URL+'?dados='+dadosEncoded;
   document.body.appendChild(iframe);
-
-  setTimeout(()=>{
-    btn.textContent='Pedido enviado ✓';
-    document.getElementById('resumo').classList.add('vis');
-    document.getElementById('resumo').scrollIntoView({behavior:'smooth',block:'start'});
-    document.body.removeChild(iframe);
-  }, 4000);
+  setTimeout(()=>{ try{document.body.removeChild(iframe);}catch(e){} }, 10000);
 }
 </script>
 </body>
